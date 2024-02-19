@@ -1,0 +1,1 @@
+FROM docker.io/postgis/postgis:13-3.4-alpine
