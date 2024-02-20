@@ -31,7 +31,7 @@ jobs:
       VARIANT: ${{ matrix.variant }}
       REGISTRY: ghcr.io
       # tag as <account>/<repo>:13-13.4-alpine-854f69c8ae1f41bfc6f14435575efbccaa5e9e5d
-      IMAGE_TAG: ${{ format('ghcr.io/{0}:{1}-{2}-{3}-{4}', github.repository, matrix.postgres, matrix.postgis, matrix.variant, github.sha) }}
+      IMAGE_TAG: ${{ format('{0}:{1}-{2}-{3}-{4}', github.repository, matrix.postgres, matrix.postgis, matrix.variant, github.sha) }}
       DOCKERFILE_LOCATION: ./${{ format('{0}-{1}', matrix.postgres, matrix.postgis)}}/${{ matrix.variant }}
 
     steps:
@@ -65,7 +65,7 @@ jobs:
         context: ${{ env.DOCKERFILE_LOCATION }}
         file: ${{ env.DOCKERFILE_LOCATION }}/Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.tag-to-lowercase.outputs.IMAGE_TAG_LOWERCASE }}
+        tags: ${{ format('ghcr.io/{0}', steps.tag-to-lowercase.outputs.IMAGE_TAG_LOWERCASE) }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
