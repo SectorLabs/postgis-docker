@@ -31,12 +31,20 @@ jobs:
       VARIANT: ${{ matrix.variant }}
       REGISTRY: ghcr.io
       # tag as <account>/<repo>:13-13.4-alpine-854f69c8ae1f41bfc6f14435575efbccaa5e9e5d
-      IMAGE_TAG: ${{ format('{0}:{1}-{2}-{3}-{4}', github.repository, matrix.postgres, matrix.postgis, matrix.variant, github.sha) }}
+      IMAGE_TAG: ${{ format('ghcr.io/{0}:{1}-{2}-{3}-{4}', github.repository, matrix.postgres, matrix.postgis, matrix.variant, github.sha) }}
       DOCKERFILE_LOCATION: ./${{ format('{0}-{1}', matrix.postgres, matrix.postgis)}}/${{ matrix.variant }}
 
     steps:
     - name: Checkout source
       uses: actions/checkout@v4
+
+    # Install the cosign tool except on PR
+    # https://github.com/sigstore/cosign-installer
+    - name: Install cosign
+      if: github.event_name != 'pull_request'
+      uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6 #v2.6.0
+      with:
+        cosign-release: 'v1.13.1'
 
     # Login against a Docker registry except on PR
     # https://github.com/docker/login-action
@@ -65,8 +73,8 @@ jobs:
         context: ${{ env.DOCKERFILE_LOCATION }}
         file: ${{ env.DOCKERFILE_LOCATION }}/Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ format('ghcr.io/{0}', steps.tag-to-lowercase.outputs.IMAGE_TAG_LOWERCASE) }}
-
+        tags: ${{ steps.tag-to-lowercase.outputs.IMAGE_TAG_LOWERCASE }}
+ 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       # repository is public to avoid leaking data.  If you would like to publish
