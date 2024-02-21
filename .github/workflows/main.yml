@@ -31,7 +31,7 @@ jobs:
       VARIANT: ${{ matrix.variant }}
       REGISTRY: ghcr.io
       # tag as <account>/<repo>:13-13.4-alpine-854f69c8ae1f41bfc6f14435575efbccaa5e9e5d
-      IMAGE_TAG: ${{ format('ghcr.io/{0}:{1}-{2}-{3}-{4}', github.repository, matrix.postgres, matrix.postgis, matrix.variant, github.sha) }}
+      IMAGE_TAG: ${{ format('ghcr.io/{0}:{1}-{2}-{3}', github.repository, matrix.postgres, matrix.postgis, matrix.variant) }}
       DOCKERFILE_LOCATION: ./${{ format('{0}-{1}', matrix.postgres, matrix.postgis)}}/${{ matrix.variant }}
 
     steps:
