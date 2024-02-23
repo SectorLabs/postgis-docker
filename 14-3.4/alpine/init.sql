@@ -1,0 +1,1 @@
+ALTER SYSTEM SET max_locks_per_transaction = 128;
